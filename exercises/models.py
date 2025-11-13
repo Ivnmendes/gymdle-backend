@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 from .managers import ExercisesManager, ExerciseHistoryManager
 
@@ -10,10 +11,10 @@ class Exercises(models.Model):
 
     exerciseId = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
-    targetMuscles = models.CharField(max_length=200)
+    targetMuscles = ArrayField(models.CharField(max_length=50), default=list)
     bodyParts = models.CharField(max_length=200)
     equipments = models.CharField(max_length=100)
-    secondaryMuscles = models.CharField(max_length=200)
+    secondaryMuscles = ArrayField(models.CharField(max_length=50), default=list)
     gifUrl = models.URLField(max_length=200)
     isTodaysExercise = models.BooleanField(default=False)
 
