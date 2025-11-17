@@ -64,6 +64,10 @@ class ExercisesManager(models.Manager):
         """Retorna QuerySet excluindo a lista de IDs de exercícios recentes."""
         return self.get_queryset().exclude(exerciseId__in=excluded_ids)
     
+    def get_exercise_by_popularity(self, popularity_level):
+        """Retorna um QuerySet contendo exercícios filtrados por nível de popularidade."""
+        return self.get_queryset().filter(popularity=popularity_level).values('exerciseId', 'name').order_by('name')
+    
 class ExerciseHistoryManager(models.Manager):
 
     def get_history_by_exercise(self, exercise_id):

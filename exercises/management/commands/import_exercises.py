@@ -48,6 +48,9 @@ class Command(BaseCommand):
                         'equipments': item.get('equipments', []),
                         'secondaryMuscles': item.get('secondaryMuscles', []),
                         'gifUrl': item.get('gifUrl', ''),
+                        'type': item.get('type', 'outro'),
+                        'grip': item.get('grip', 'nenhuma'),
+                        'popularity': item.get('popularity', 'media'),
                     }
                 )
                     if created:

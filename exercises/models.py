@@ -15,6 +15,9 @@ class Exercises(models.Model):
     bodyParts = models.CharField(max_length=200)
     equipments = models.CharField(max_length=100)
     secondaryMuscles = ArrayField(models.CharField(max_length=50), default=list)
+    type = models.CharField(max_length=100, choices=[('empurrar', 'Empurrar'), ('puxar', 'Puxar'), ('core', 'Core'), ('outro', 'Outro')], default='outro')
+    grip = models.CharField(max_length=100, choices=[('pronada', 'Pronada'), ('supinada', 'Supinada'), ('neutra', 'Neutra'), ('mista', 'Mista'), ('nenhuma', 'Nenhuma')], default='nenhuma')
+    popularity = models.CharField(max_length=100, choices=[('baixa', 'Baixa'), ('media', 'Média'), ('alta', 'Alta')], default='media')
     gifUrl = models.URLField(max_length=200)
     isTodaysExercise = models.BooleanField(default=False)
 
