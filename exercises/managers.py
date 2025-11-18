@@ -18,21 +18,35 @@ class ExercisesManager(models.Manager):
         """Retorna um QuerySet contendo nomes e IDs dos exercícios."""
         return self.get_queryset().values('name', 'exerciseId').order_by('name')
     
-    def get_todays_exercises(self, dificulty=1):
-        """Retorna um QuerySet contendo os exercícios marcados como 'isTodaysExercise'."""
-        return self.get_queryset().filter(isTodaysExercise=True, todayGameDificulty=dificulty).order_by('name')
-    
-    def get_exercise_details(self, exercise_id):
-        """Retorna um dicionário com os detalhes completos de um exercício específico."""
-        return self.get_queryset().filter(exerciseId=exercise_id).values(
+    def get_todays_exercises(self, is_normal_mode=True):
+        """
+        CORREÇÃO: O campo 'todayGameDificulty' não existe. 
+        Usamos 'isTodaysExercise' e 'isNormalMode' para filtrar.
+        Retorna o objeto único (.first()) ou dicionário, dependendo da sua view.
+        """
+        return self.get_queryset().filter(
+            isTodaysExercise=True, 
+            isNormalMode=is_normal_mode
+        ).values(
             'exerciseId', 'name', 'targetMuscles', 'bodyParts', 
-            'equipments', 'secondaryMuscles', 'gifUrl', 'isTodaysExercise'
+            'equipments', 'secondaryMuscles', 'type', 'grip', 'popularity', 'gifUrl'
         ).first()
     
-    def change_todays_exercise(self, exercise_id, is_today):
-        """Altera o status 'isTodaysExercise' de um exercício específico."""
-        return self.get_queryset().filter(exerciseId=exercise_id).update(isTodaysExercise=is_today)
+    def get_exercise_details(self, exercise_id):
+        """Retorna detalhes usando .first() para virar dicionário/objeto ou None"""
+        return self.get_queryset().filter(exerciseId=exercise_id).values(
+            'exerciseId', 'name', 'targetMuscles', 'bodyParts', 
+            'equipments', 'secondaryMuscles', 'gifUrl', 'isTodaysExercise',
+            'type', 'grip', 'popularity'
+        ).first()
     
+    def change_todays_exercise(self, exercise_id, is_today, is_normal_mode=True):
+        """Define o exercício do dia e qual modo ele pertence."""
+        return self.get_queryset().filter(exerciseId=exercise_id).update(
+            isTodaysExercise=is_today, 
+            isNormalMode=is_normal_mode
+        )
+
     def search_exercises_by_name(self, search_term):
         """Retorna um QuerySet contendo exercícios cujo nome contém o termo de busca."""
         return self.filter(name__icontains=search_term).values('exerciseId', 'name').order_by('name')
@@ -52,19 +66,34 @@ class ExercisesManager(models.Manager):
         """Retorna um QuerySet contendo exercícios que utilizam o equipamento especificado."""
         return self.filter(equipments__icontains=equipment).values('exerciseId', 'name').order_by('name')
     
-    def reset_all_todays_exercises(self):
-        """Reseta o status 'isTodaysExercise' para False em todos os exercícios."""
-        return self.get_queryset().update(isTodaysExercise=False)
+    def reset_all_todays_exercises(self, is_normal_mode=True):
+        """
+        Reseta apenas os exercícios do modo atual.
+        Isso impede que sortear o 'Difícil' apague o 'Normal' já sorteado.
+        """
+        return self.get_queryset().filter(isNormalMode=is_normal_mode).update(isTodaysExercise=False)
     
     def count_total_exercises(self):
         """Retorna a contagem total de exercícios na base de dados."""
         return self.get_queryset().count()
     
-    def get_available_for_today(self, excluded_ids):
-        """Retorna QuerySet excluindo a lista de IDs de exercícios recentes."""
-        return self.get_queryset().exclude(exerciseId__in=excluded_ids)
+    def get_available_for_today(self, excluded_ids, is_normal_mode=True):
+        """
+        CORREÇÃO: Ajustado para usar as strings 'alta', 'media', 'baixa' 
+        conforme definido no choices do Model.
+        """
+        if is_normal_mode:
+            target_popularities = ['alta']
+        else:
+            target_popularities = ['media', 'baixa']
+            
+        return self.get_queryset().filter(
+            popularity__in=target_popularities
+        ).exclude(
+            exerciseId__in=excluded_ids
+        )
     
-    def get_exercise_by_popularity(self, popularity_level):
+    def get_exercises_by_popularity(self, popularity_level):
         """Retorna um QuerySet contendo exercícios filtrados por nível de popularidade."""
         return self.get_queryset().filter(popularity=popularity_level).values('exerciseId', 'name').order_by('name')
     
@@ -74,9 +103,9 @@ class ExerciseHistoryManager(models.Manager):
         """Retorna um QuerySet contendo o histórico de um exercício específico."""
         return self.get_queryset().filter(exercise__exerciseId=exercise_id).order_by('-performed_at')
     
-    def add_exercise_history(self, exercise):
+    def add_exercise_history(self, exercise, is_normal_mode=True):
         """Adiciona uma nova entrada ao histórico de exercícios."""
-        history_entry = self.model(exercise=exercise)
+        history_entry = self.model(exercise=exercise, isNormalMode=is_normal_mode)
         history_entry.save()
         return history_entry
     
@@ -84,12 +113,12 @@ class ExerciseHistoryManager(models.Manager):
         """Remove todas as entradas do histórico de exercícios."""
         return self.get_queryset().all().delete()
     
-    def get_recent_history_ids(self, limit=10):
+    def get_recent_history_ids(self, limit=10, is_normal_mode=True):
         """Retorna um QuerySet contendo as entradas mais recentes do histórico de exercícios."""
-        return self.get_queryset().values_list('exercise__exerciseId', flat=True).order_by('-performed_at')[:limit]
+        return self.get_queryset().filter(isNormalMode=is_normal_mode).values_list('exercise__exerciseId', flat=True).order_by('-performed_at')[:limit]
     
-    def get_history_count(self):
+    def get_history_count(self, is_normal_mode=True):
         """Retorna a contagem total de entradas no histórico de exercícios para cada exercício."""
-        return self.get_queryset().values('exercise__exerciseId', 'exercise__name').annotate(
+        return self.get_queryset().filter(isNormalMode=is_normal_mode).values('exercise__exerciseId', 'exercise__name').annotate(
             count=models.Count('id')
         ).order_by('-count')

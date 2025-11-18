@@ -27,13 +27,13 @@ class SimpleExercisesSerializer(serializers.ModelSerializer):
 
 
 class ExercisesGuessWithoutPopularitySerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
     targetMuscles = serializers.CharField(max_length=100)
     bodyparts = serializers.CharField(max_length=100)
     equipments = serializers.CharField(max_length=100)
     secondaryMuscles = serializers.CharField(max_length=100)
     type = serializers.CharField(max_length=10)
     grip = serializers.CharField(max_length=50)
-    popularity = serializers.CharField(max_length=10)
 
 class ExercisesGuessWithPopularitySerializer(serializers.Serializer):
     targetMuscles = serializers.CharField(max_length=100)

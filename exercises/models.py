@@ -20,7 +20,7 @@ class Exercises(models.Model):
     popularity = models.CharField(max_length=100, choices=[('baixa', 'Baixa'), ('media', 'Média'), ('alta', 'Alta')], default='media')
     gifUrl = models.URLField(max_length=200)
     isTodaysExercise = models.BooleanField(default=False)
-    todayGameDificulty = models.IntegerField(null=True, blank=True, choices=[(1, 'Fácil'), (2, 'Médio'), (3, 'Difícil')])
+    isNormalMode = models.BooleanField(null=True, blank=True)
 
     objects = ExercisesManager()
 
@@ -35,10 +35,11 @@ class ExerciseHistory(models.Model):
         verbose_name_plural = "Exercise Histories"
 
     exercise = models.ForeignKey(Exercises, on_delete=models.CASCADE)
-    performed_at = models.DateTimeField(auto_now_add=True)
+    performedAt = models.DateTimeField(auto_now_add=True)
+    isNormalMode = models.BooleanField(default=True)
 
     objects = ExerciseHistoryManager()
     
     def __str__(self):
-        return f"{self.exercise.name} performed at {self.performed_at}"
+        return f"{self.exercise.name} performed at {self.performedAt}"
     
