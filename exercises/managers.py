@@ -18,9 +18,9 @@ class ExercisesManager(models.Manager):
         """Retorna um QuerySet contendo nomes e IDs dos exercícios."""
         return self.get_queryset().values('name', 'exerciseId').order_by('name')
     
-    def get_todays_exercises(self):
+    def get_todays_exercises(self, dificulty=1):
         """Retorna um QuerySet contendo os exercícios marcados como 'isTodaysExercise'."""
-        return self.get_queryset().filter(isTodaysExercise=True).order_by('name')
+        return self.get_queryset().filter(isTodaysExercise=True, todayGameDificulty=dificulty).order_by('name')
     
     def get_exercise_details(self, exercise_id):
         """Retorna um dicionário com os detalhes completos de um exercício específico."""

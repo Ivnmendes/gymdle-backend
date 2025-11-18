@@ -20,6 +20,7 @@ class Exercises(models.Model):
     popularity = models.CharField(max_length=100, choices=[('baixa', 'Baixa'), ('media', 'Média'), ('alta', 'Alta')], default='media')
     gifUrl = models.URLField(max_length=200)
     isTodaysExercise = models.BooleanField(default=False)
+    todayGameDificulty = models.IntegerField(null=True, blank=True, choices=[(1, 'Fácil'), (2, 'Médio'), (3, 'Difícil')])
 
     objects = ExercisesManager()
 
