@@ -34,8 +34,7 @@ def compare_simple(guessed_value, correct_value):
     status = 'wrong'
     normalized_guessed = normalize_input(guessed_value)
     normalized_correct = normalize_input(correct_value)
-    
-    print("\n\n\n", guessed_value, correct_value, "\n", normalized_guessed, normalized_correct , "\n\n\n")
+
     if normalized_guessed == normalized_correct:
         status = 'right'
 
@@ -56,8 +55,6 @@ def compare(guessed_value, correct_value):
     """
     g_set = normalize_input(guessed_value)
     c_set = normalize_input(correct_value)
-
-    print("\n\n\n", guessed_value, correct_value, "\n", g_set, c_set , "\n\n\n")
 
     status = 'wrong'
     
