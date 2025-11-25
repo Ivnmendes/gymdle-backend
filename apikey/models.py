@@ -15,6 +15,10 @@ class APIKey(models.Model):
     def __str__(self):
         return f"Key for {self.service} ({self.key[:8]}...)"
 
+    @property
+    def is_authenticated(self):
+        return True
+    
     class Meta:
         verbose_name = "Chave de API"
         verbose_name_plural = "Chaves de API"

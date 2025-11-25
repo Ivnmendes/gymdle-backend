@@ -23,4 +23,4 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
 
         service = api_key_obj.service if api_key_obj.service else None
         
-        return (service, api_key_obj)
+        return (api_key_obj, api_key_header)
