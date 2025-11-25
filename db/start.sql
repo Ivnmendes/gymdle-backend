@@ -1,5 +1,5 @@
 -- start.sql
-CREATE ROLE gymdle_user WITH LOGIN PASSWORD '10012005' IF NOT EXISTS;
+CREATE ROLE gymdle_user WITH LOGIN PASSWORD '10012005';
 CREATE DATABASE gymdle_db OWNER gymdle_user;
 \c gymdle_db; 
 GRANT ALL PRIVILEGES ON SCHEMA public TO gymdle_user;

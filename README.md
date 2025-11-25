@@ -34,6 +34,7 @@ Repositório para o backend do Gymdle, uma aplicação de adivinhação de exerc
 
    ```bash
     pip install -r gymdle-backend/requirements.txt
+   ```
 
 5. Configure o banco de dados no arquivo `settings.py`.
 
