@@ -97,11 +97,17 @@ class ExercisesManager(models.Manager):
         """Retorna um QuerySet contendo exercícios filtrados por nível de popularidade."""
         return self.get_queryset().filter(popularity=popularity_level).values('exerciseId', 'name').order_by('name')
     
+    def get_hint_fields(self, exercise_id):
+        """Retorna os campos necessários para dicas de um exercício específico."""
+        return self.get_queryset().filter(exerciseId=exercise_id).values(
+            'bodyParts', 'gifUrl', 'instructions'
+        ).first()
+    
 class ExerciseHistoryManager(models.Manager):
 
     def get_history_by_exercise(self, exercise_id):
         """Retorna um QuerySet contendo o histórico de um exercício específico."""
-        return self.get_queryset().filter(exercise__exerciseId=exercise_id).order_by('-performed_at')
+        return self.get_queryset().filter(exercise__exerciseId=exercise_id).order_by('-performedAt')
     
     def add_exercise_history(self, exercise, is_normal_mode=True):
         """Adiciona uma nova entrada ao histórico de exercícios."""
@@ -115,7 +121,7 @@ class ExerciseHistoryManager(models.Manager):
     
     def get_recent_history_ids(self, limit=10, is_normal_mode=True):
         """Retorna um QuerySet contendo as entradas mais recentes do histórico de exercícios."""
-        return self.get_queryset().filter(isNormalMode=is_normal_mode).values_list('exercise__exerciseId', flat=True).order_by('-performed_at')[:limit]
+        return self.get_queryset().filter(isNormalMode=is_normal_mode).values_list('exercise__exerciseId', flat=True).order_by('-performedAt')[:limit]
     
     def get_history_count(self, is_normal_mode=True):
         """Retorna a contagem total de entradas no histórico de exercícios para cada exercício."""

@@ -51,6 +51,7 @@ class Command(BaseCommand):
                         'type': item.get('type', 'outro'),
                         'grip': item.get('grip', 'nenhuma'),
                         'popularity': item.get('popularity', 'media'),
+                        'instructions': item.get('instructions_pt', []),
                     }
                 )
                     if created:

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ] + MY_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,12 +87,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'gymdle_db',
         'USER': 'gymdle_user',
-        'PASSWORD': 'aaaaaaa',
+        'PASSWORD': '10012005',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
 
+# CORS
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

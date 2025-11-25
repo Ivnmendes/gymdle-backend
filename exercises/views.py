@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -169,3 +170,50 @@ class EvaluateGameWithPopularityView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
+
+class HintTodayGameViewSet(viewsets.ViewSet):
+    """
+    Rotas para fornecer dicas do exercício do dia.
+    """
+    @action(detail=False, methods=['get'], url_path='hint-body-parts')
+    def hint_body_parts(self, request):
+        correct_exercise = Exercises.objects.get_todays_exercises()
+        if not correct_exercise:
+            return Response({'error': 'Nenhum exercício do dia definido.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        hint_data = Exercises.objects.get_hint_fields(correct_exercise['exerciseId'])
+        if not hint_data:
+            return Response({'error': 'Dados de dica não encontrados.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({
+            'bodyParts': hint_data['bodyParts'],
+        }, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='hint-instructions')
+    def hint_instructions(self, request):
+        correct_exercise = Exercises.objects.get_todays_exercises()
+        if not correct_exercise:
+            return Response({'error': 'Nenhum exercício do dia definido.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        hint_data = Exercises.objects.get_hint_fields(correct_exercise['exerciseId'])
+        if not hint_data:
+            return Response({'error': 'Dados de dica não encontrados.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({
+            'instructions': hint_data['instructions'],
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='hint-gif-url')
+    def hint_gif_url(self, request):
+        correct_exercise = Exercises.objects.get_todays_exercises()
+        if not correct_exercise:
+            return Response({'error': 'Nenhum exercício do dia definido.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        hint_data = Exercises.objects.get_hint_fields(correct_exercise['exerciseId'])
+        if not hint_data:
+            return Response({'error': 'Dados de dica não encontrados.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({
+            'gifUrl': hint_data['gifUrl'],
+        }, status=status.HTTP_200_OK)

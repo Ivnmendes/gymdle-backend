@@ -19,6 +19,7 @@ class Exercises(models.Model):
     grip = models.CharField(max_length=100, choices=[('pronada', 'Pronada'), ('supinada', 'Supinada'), ('neutra', 'Neutra'), ('mista', 'Mista'), ('nenhuma', 'Nenhuma')], default='nenhuma')
     popularity = models.CharField(max_length=100, choices=[('baixa', 'Baixa'), ('media', 'Média'), ('alta', 'Alta')], default='media')
     gifUrl = models.URLField(max_length=200)
+    instructions = ArrayField(models.TextField(), default=list)
     isTodaysExercise = models.BooleanField(default=False)
     isNormalMode = models.BooleanField(null=True, blank=True)
 
